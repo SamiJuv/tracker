@@ -1,6 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const dateFormat = require("dateformat");
+const chalk = require("chalk");
 
 const LOG_FILE_PATH = path.resolve(__dirname, "../data/trackingLog.json");
 
@@ -10,7 +11,7 @@ const startTracking = () => {
   const formattedTime = dateFormat(date, "H:MM:ss")
 
   if (isAlreadyTracking()) {
-    console.log("Already tracking!");
+    console.log(chalk.red("Already tracking!"));
     return false;
   }
 
@@ -20,7 +21,7 @@ const startTracking = () => {
 
   appendJsonToLogFile(newEntry);
   
-  console.log(`Time tracking started at ${formattedTime}`);
+  console.log(chalk.blue(`Time tracking started at ${formattedTime}`));
 }
 
 const stopTracking = (message) => {
@@ -29,8 +30,8 @@ const stopTracking = (message) => {
 
   const duration = getDurationOfLastEntry();
 
-  console.log("Tracking stopped");
-  console.log(`Duration: ${duration}`);
+  console.log(chalk.green("Tracking stopped"));
+  console.log(chalk.cyan(`Duration: ${duration}`));
 }
 
 const lastEntryDuration = () => {
