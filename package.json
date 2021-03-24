@@ -8,6 +8,7 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "commander": "^7.2.0"
+    "commander": "^7.2.0",
+    "dateformat": "^4.5.1"
   }
 }
