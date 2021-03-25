@@ -9,7 +9,7 @@ const {
   createProject,
   listProjects,
   deleteProject
-} = require("./actions");
+} = require("../actions");
 
 program.version("0.0.1", "-v, --version", "output the current version");
 program.description("Command line operated time tracking tool");

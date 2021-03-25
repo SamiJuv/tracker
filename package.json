@@ -8,8 +8,9 @@
   "license": "MIT",
   "private": false,
   "bin": {
-    "tracker": "index.js"
+    "tracker": "./bin/index.js"
   },
+  "preferGlobal": true,
   "dependencies": {
     "chalk": "^4.1.0",
     "commander": "^7.2.0",

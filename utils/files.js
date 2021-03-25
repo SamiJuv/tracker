@@ -11,8 +11,8 @@ const appendJsonToLogFile = (jsonItem) => {
 }
 
 const getLastEntryInLogFile = () => {
-  const currentJson = getCurrentJson();
-  const lastEntry = currentJson[currentJson.length-1];
+  const allLogEntries = getAllLogEntires();
+  const lastEntry = allLogEntries[allLogEntries.length-1];
 
   return lastEntry;
 }

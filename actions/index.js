@@ -24,13 +24,37 @@ const startTracking = () => {
     return false;
   }
 
-  const newEntry = {
-    startTime: timestamp
-  };
+  const projectOptions = getProjectOptions();
 
-  appendJsonToLogFile(newEntry);
-  
-  console.log(chalk.blue(`Time tracking started at ${formattedTime}`));
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "project",
+        message: "Select the project where you want to log the time",
+        choices: [
+          "No project",
+          new inquirer.Separator(),
+          ...projectOptions,
+          new inquirer.Separator(),
+          "Cancel"
+        ]
+      }
+    ])
+    .then((answer) => {
+      if (answer.project === "Cancel") {
+        return false;
+      }
+
+      const newEntry = {
+        startTime: timestamp,
+        ...answer.project !== "No project" && { project: answer.project }
+      };
+    
+      appendJsonToLogFile(newEntry);
+      
+      console.log(chalk.blue(`Time tracking started at ${formattedTime}`));
+    });
 }
 
 const stopTracking = (message) => {
@@ -55,6 +79,7 @@ const listEntries = () => {
     const durationIsoDate = new Date(durationSeconds).toISOString().substr(11, 8);
     
     return {
+      ...entry.project && { project: entry.project },
       message: entry.message,
       duration: durationIsoDate
     }
@@ -85,13 +110,7 @@ const listProjects = () => {
 }
 
 const deleteProject = () => {
-  const projects = getAllProjects();
-  const projectChoices = projects.map(project => {
-    return {
-      name: project.name,
-      value: project.machineName
-    }
-  });
+  const projectOptions = getProjectOptions();
 
   inquirer
     .prompt([
@@ -100,7 +119,7 @@ const deleteProject = () => {
         name: "project",
         message: "Select the project you want to delete",
         choices: [
-          ...projectChoices,
+          ...projectOptions,
           new inquirer.Separator(),
           "Cancel"
         ]
@@ -122,6 +141,18 @@ const isAlreadyTracking = () => {
   }
 
   return false;
+}
+
+const getProjectOptions = () => {
+  const projects = getAllProjects();
+  const projectOptions = projects.map(project => {
+    return {
+      name: project.name,
+      value: project.machineName
+    }
+  });
+
+  return projectOptions;
 }
 
 module.exports = {
