@@ -1,7 +1,15 @@
 #!/usr/bin/env node
 
 const { program } = require("commander");
-const { startTracking, stopTracking, lastEntryDuration, listEntries } = require("./src/actions");
+const { 
+  startTracking,
+  stopTracking,
+  lastEntryDuration,
+  listEntries,
+  createProject,
+  listProjects,
+  deleteProject
+} = require("./actions");
 
 program.version("0.0.1", "-v, --version", "output the current version");
 program.description("Command line operated time tracking tool");
@@ -30,5 +38,23 @@ program
   .alias("ls")
   .description("List latest 20 entries")
   .action(() => listEntries());
+  
+program
+  .command("create-project <name>")
+  .alias("cr")
+  .description("Create new project")
+  .action((name) => createProject(name));
+
+program
+  .command("list-projects")
+  .alias("lsproj")
+  .description("List all project")
+  .action(() => listProjects());
+
+program
+  .command("delete-project")
+  .alias("delproj")
+  .description("Delete project")
+  .action(() => deleteProject());
 
 program.parse(process.argv);
