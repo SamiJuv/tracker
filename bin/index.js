@@ -11,7 +11,7 @@ const {
   deleteProject
 } = require("../actions");
 
-program.version("0.0.1", "-v, --version", "output the current version");
+program.version("0.1.0", "-v, --version", "output the current version");
 program.description("Command line operated time tracking tool");
 
 const options = program.opts();

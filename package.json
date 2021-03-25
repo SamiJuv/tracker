@@ -1,6 +1,6 @@
 {
   "name": "tracker",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Command line operated time tracking tool",
   "main": "index.js",
   "repository": "https://github.com/SamiJuv/tracker",
