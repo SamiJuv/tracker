@@ -52,10 +52,16 @@ const getAllLogEntires = () => {
 }
 
 const getAllProjects = () => {
-  const projectsFile = fs.readFileSync(PROJECTS_FILE_PATH);
-  const allProjects = JSON.parse(projectsFile);
+  try {
+    fs.accessSync(PROJECTS_FILE_PATH, fs.constants.R_OK);
+    
+    const projectsFile = fs.readFileSync(PROJECTS_FILE_PATH);
+    const allProjects = JSON.parse(projectsFile);
 
-  return allProjects;
+    return allProjects;
+  } catch (err) {
+    return false;
+  }
 }
 
 const addNewProject = (newProject) => {
