@@ -1,6 +1,7 @@
 const dateFormat = require("dateformat");
-const chalk = require("chalk");
 const inquirer = require("inquirer");
+
+const { log } = require("../utils/log");
 
 const { 
   appendJsonToLogFile,
@@ -20,7 +21,7 @@ const startTracking = () => {
   const formattedTime = dateFormat(date, "H:MM:ss")
 
   if (isAlreadyTracking()) {
-    console.log(chalk.red("Already tracking!"));
+    log("Already tracking!", "error");
     return false;
   }
 
@@ -53,7 +54,7 @@ const startTracking = () => {
     
       appendJsonToLogFile(newEntry);
       
-      console.log(chalk.blue(`Time tracking started at ${formattedTime}`));
+      log(`Time tracking started at ${formattedTime}`, "notice");
     });
 }
 
@@ -63,12 +64,12 @@ const stopTracking = (message) => {
 
   const duration = getDurationOfLastEntry();
 
-  console.log(chalk.green("Tracking stopped"));
-  console.log(chalk.cyan(`Duration: ${duration}`));
+  log("Tracking stopped", "success");
+  log(`Duration: ${duration}`, "info");
 }
 
 const lastEntryDuration = () => {
-  console.log(getDurationOfLastEntry());
+  log(getDurationOfLastEntry(), "info");
 }
 
 const listEntries = () => {
@@ -85,7 +86,7 @@ const listEntries = () => {
     }
   });
 
-  console.log(formattedEntries);
+  log(formattedEntries, "info");
 }
 
 const createProject = (name) => {
@@ -95,22 +96,22 @@ const createProject = (name) => {
   };
 
   if (addNewProject(newProject)) {
-    console.log(chalk.green(`New project added: ${name}`));
+    log(`New project added: ${name}`, "success");
   } else {
-    console.log(chalk.red("Error while creating project"));
+    log("Error while creating project", "error");
   }
 }
 
 const listProjects = () => {
   const allProjects = getAllProjects();
-  
+
   if (!allProjects) {
-    console.log(chalk.red("You haven't created projects yet"));
+    log("You haven't created projects yet", "error");
     return;
   }
 
   allProjects.forEach(project => {
-    console.log(chalk.green(project.name));
+    log(project.name, "info");
   });
 }
 
@@ -133,7 +134,7 @@ const deleteProject = () => {
     .then((answer) => {
       if (answer.project !== "Cancel") {
         deleteProjectFromFile(answer.project);
-        console.log(chalk.green("Project deleted"));
+        log("Project deleted", "success");
       }
     });
 }
