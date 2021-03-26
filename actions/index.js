@@ -103,6 +103,11 @@ const createProject = (name) => {
 
 const listProjects = () => {
   const allProjects = getAllProjects();
+  
+  if (!allProjects) {
+    console.log(chalk.red("You haven't created projects yet"));
+    return;
+  }
 
   allProjects.forEach(project => {
     console.log(chalk.green(project.name));
