@@ -86,6 +86,13 @@ const deleteProjectFromFile = (projectMachineName) => {
   fs.writeFileSync(PROJECTS_FILE_PATH, JSON.stringify(newJson));
 }
 
+const getProjectNameByMachineName = (machineName) => {
+  const allProjects = getAllProjects();
+  const project = allProjects.find(project => project.machineName === machineName);
+  
+  return project.name;
+}
+
 module.exports = {
   appendJsonToLogFile,
   getLastEntryInLogFile,
@@ -94,5 +101,6 @@ module.exports = {
   getAllLogEntires,
   getAllProjects,
   addNewProject,
-  deleteProjectFromFile
+  deleteProjectFromFile,
+  getProjectNameByMachineName
 }

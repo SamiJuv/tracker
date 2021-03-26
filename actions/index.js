@@ -11,7 +11,8 @@ const {
   getAllLogEntires,
   getAllProjects,
   addNewProject,
-  deleteProjectFromFile
+  deleteProjectFromFile,
+  getProjectNameByMachineName
 } = require("../utils/files");
 const { stringToMachineName } = require("../utils/strings");
 
@@ -75,18 +76,26 @@ const lastEntryDuration = () => {
 const listEntries = () => {
   const allEntries = getAllLogEntires();
 
-  const formattedEntries = allEntries.slice(0, 20).map(entry => {
+  allEntries.slice(-10).forEach(entry => {
     const durationSeconds = entry.endTime - entry.startTime;
     const durationIsoDate = new Date(durationSeconds).toISOString().substr(11, 8);
-    
-    return {
-      ...entry.project && { project: entry.project },
-      message: entry.message,
-      duration: durationIsoDate
-    }
-  });
 
-  log(formattedEntries, "info");
+    log("-----------------", "error");
+
+    if (entry.project) {
+      const projectName = getProjectNameByMachineName(entry.project);
+
+      log(`# ${projectName}`, "success");
+    } else {
+      log("- no project -", "success");
+    }
+
+    if (entry.message) {
+      log(entry.message, "notice");
+    }
+
+    log(durationIsoDate, "info");
+  });
 }
 
 const createProject = (name) => {

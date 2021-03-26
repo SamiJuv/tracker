@@ -36,7 +36,7 @@ program
 program
   .command("list-entries")
   .alias("ls")
-  .description("List latest 20 entries")
+  .description("List latest 10 entries")
   .action(() => listEntries());
   
 program
