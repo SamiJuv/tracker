@@ -1,6 +1,7 @@
 const fs = require("fs");
 
 const { LOG_FILE_PATH, PROJECTS_FILE_PATH } = require("../constants");
+const { calculateDuration } = require("./times");
 
 const appendJsonToLogFile = (jsonItem) => {
   const logFile = fs.readFileSync(LOG_FILE_PATH);
@@ -19,10 +20,9 @@ const getLastEntryInLogFile = () => {
 
 const getDurationOfLastEntry = () => {
   const lastEntry = getLastEntryInLogFile();
-  const durationSeconds = lastEntry.endTime - lastEntry.startTime;
-  const durationIsoDate = new Date(durationSeconds).toISOString().substr(11, 8);
+  const duration = calculateDuration(lastEntry.startTime, lastEntry.endTime);
 
-  return durationIsoDate;
+  return duration;
 }
 
 const logEndTime = (timestamp, message) => {
@@ -45,10 +45,16 @@ const logEndTime = (timestamp, message) => {
 }
 
 const getAllLogEntires = () => {
-  const logFile = fs.readFileSync(LOG_FILE_PATH);
-  const currentEntries = JSON.parse(logFile);
-  
-  return currentEntries;
+  try {
+    fs.accessSync(LOG_FILE_PATH, fs.constants.R_OK);
+
+    const logFile = fs.readFileSync(LOG_FILE_PATH);
+    const currentEntries = JSON.parse(logFile);
+    
+    return currentEntries;
+  } catch (err) {
+    return false;
+  }
 }
 
 const getAllProjects = () => {
@@ -79,18 +85,43 @@ const addNewProject = (newProject) => {
   return true;
 }
 
-const deleteProjectFromFile = (projectMachineName) => {
+const deleteProjectData = (projectMachineName) => {
+  // Remove from projects
   const allProjects = getAllProjects();
-  const newJson = allProjects.filter(project => project.machineName !== projectMachineName);
+  const newProjectsJson = allProjects.filter(project => project.machineName !== projectMachineName);
 
-  fs.writeFileSync(PROJECTS_FILE_PATH, JSON.stringify(newJson));
+  fs.writeFileSync(PROJECTS_FILE_PATH, JSON.stringify(newProjectsJson));
+
+  // Remove from time log
+  const logEntries = getAllLogEntires();
+  const newLogJson = logEntries.filter(entry => entry.project !== projectMachineName);
+
+  fs.writeFileSync(LOG_FILE_PATH, JSON.stringify(newLogJson));
 }
 
-const getProjectNameByMachineName = (machineName) => {
+const getProjectByMachineName = (projectMachineName) => {
   const allProjects = getAllProjects();
-  const project = allProjects.find(project => project.machineName === machineName);
+  const project = allProjects.find(project => project.machineName === projectMachineName);
   
-  return project.name;
+  return project;
+}
+
+const getProjectTotalTime = (projectMachineName) => {
+  if (!projectMachineName) {
+    return false;
+  }
+
+  const allEntries = getAllLogEntires();
+  const selectedProjectsEntries = allEntries.filter(entry => entry.project === projectMachineName);
+  
+  const totalMilliSeconds = selectedProjectsEntries.reduce((acc, curr) => {
+    const durationMilliSeconds = curr.endTime - curr.startTime;
+    return acc + durationMilliSeconds;
+  }, 0);
+
+  const totalTime = new Date(totalMilliSeconds).toISOString().substr(11, 8);
+
+  return totalTime;
 }
 
 module.exports = {
@@ -101,6 +132,7 @@ module.exports = {
   getAllLogEntires,
   getAllProjects,
   addNewProject,
-  deleteProjectFromFile,
-  getProjectNameByMachineName
+  deleteProjectData,
+  getProjectByMachineName,
+  getProjectTotalTime
 }

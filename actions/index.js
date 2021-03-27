@@ -1,5 +1,6 @@
 const dateFormat = require("dateformat");
 const inquirer = require("inquirer");
+const chalk = require("chalk");
 
 const { log } = require("../utils/log");
 
@@ -11,10 +12,12 @@ const {
   getAllLogEntires,
   getAllProjects,
   addNewProject,
-  deleteProjectFromFile,
-  getProjectNameByMachineName
+  deleteProjectData,
+  getProjectByMachineName,
+  getProjectTotalTime
 } = require("../utils/files");
 const { stringToMachineName } = require("../utils/strings");
+const { calculateDuration } = require("../utils/times");
 
 const startTracking = () => {
   const date = new Date();
@@ -77,15 +80,14 @@ const listEntries = () => {
   const allEntries = getAllLogEntires();
 
   allEntries.slice(-10).forEach(entry => {
-    const durationSeconds = entry.endTime - entry.startTime;
-    const durationIsoDate = new Date(durationSeconds).toISOString().substr(11, 8);
+    const duration = calculateDuration(entry.startTime, entry.endTime);
 
     log("-----------------", "error");
 
     if (entry.project) {
-      const projectName = getProjectNameByMachineName(entry.project);
+      const project = getProjectByMachineName(entry.project);
 
-      log(`# ${projectName}`, "success");
+      log(`# ${project.name}`, "success");
     } else {
       log("- no project -", "success");
     }
@@ -94,7 +96,7 @@ const listEntries = () => {
       log(entry.message, "notice");
     }
 
-    log(durationIsoDate, "info");
+    log(duration, "info");
   });
 }
 
@@ -142,9 +144,30 @@ const deleteProject = () => {
     ])
     .then((answer) => {
       if (answer.project !== "Cancel") {
-        deleteProjectFromFile(answer.project);
+        deleteProjectData(answer.project);
         log("Project deleted", "success");
       }
+    });
+}
+
+const totalTime = () => {
+  const projectOptions = getProjectOptions();
+
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "project",
+        message: "Select the project",
+        choices: [
+          ...projectOptions
+        ]
+      }
+    ])
+    .then((answer) => {
+      const project = getProjectByMachineName(answer.project);
+      const totalTime = getProjectTotalTime(answer.project);
+      console.log(chalk.yellow(`Total time tracked to ${project.name}:`, chalk.green(totalTime)));
     });
 }
 
@@ -177,5 +200,6 @@ module.exports = {
   listEntries,
   createProject,
   listProjects,
-  deleteProject
+  deleteProject,
+  totalTime
 }

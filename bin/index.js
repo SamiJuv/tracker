@@ -8,7 +8,8 @@ const {
   listEntries,
   createProject,
   listProjects,
-  deleteProject
+  deleteProject,
+  totalTime
 } = require("../actions");
 
 program.version("0.1.0", "-v, --version", "output the current version");
@@ -41,7 +42,7 @@ program
   
 program
   .command("create-project <name>")
-  .alias("cr")
+  .alias("crproj")
   .description("Create new project")
   .action((name) => createProject(name));
 
@@ -56,5 +57,10 @@ program
   .alias("delproj")
   .description("Delete project")
   .action(() => deleteProject());
+
+program
+  .command("total")
+  .description("Show total time logged to project")
+  .action(() => totalTime());
 
 program.parse(process.argv);
