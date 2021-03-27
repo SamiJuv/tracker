@@ -19,13 +19,16 @@ npm install --global .
 ### Manage projects
 ```
 # create new project
-$ tracker create-project <name>
+$ tracker create-project|crproj <name>
 
 # list projects
-$ tracker list-projects
+$ tracker list-projects|lsproj
 
 # delete project
-$ tracker delete-project
+$ tracker delete-project|delproj
+
+# show total time tracked to project
+$ tracker total
 ```
 
 ### Time tracking
@@ -36,9 +39,9 @@ $ tracker start
 # stop tracking
 $ tracker stop [-m <message>]
 
-# list latest 10 entries
-$ tracker list-entries
-
 # show duration of the last entry
-$ tracker last-duration
+$ tracker last-duration|dur
+
+# list latest 10 entries
+$ tracker list-entries|ls
 ```
